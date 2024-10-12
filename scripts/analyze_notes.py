@@ -2,6 +2,7 @@ import pandas as pd
 from openai import OpenAI
 import tiktoken
 
+
 # Read the CSV file into a pandas DataFrame
 df = pd.read_csv('salesforce_accounts_notes.csv')
 
