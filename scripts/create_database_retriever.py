@@ -18,7 +18,7 @@ os.environ["OPENAI_API_KEY"] = api_key
 # os.environ["LANGCHAIN_API_KEY"] = getpass.getpass()
 # os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
-db = SQLDatabase.from_uri("mysql://root:@localhost:3306/report_generator_tests")
+db = SQLDatabase.from_uri("mysql://root:password@localhost:3306/report_generator_tests")
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
@@ -64,27 +64,27 @@ anychart_schema = {
         "type": {
           "type": "string",
           "enum": [
-            "Pie",
-            "Bar",
-            "Line",
-            "Area",
-            "Column",
-            "Scatter",
-            "Bubble",
-            "Funnel",
-            "Pyramid",
-            "Radar",
-            "Polar",
-            "HeatMap",
-            "TreeMap",
-            "TagCloud",
-            "Sunburst",
-            "Sparkline",
-            "Bullet",
-            "Gantt",
-            "Stock",
-            "Waterfall",
-            "CircularGauge"
+            "pie",
+            "bar",
+            "line",
+            "area",
+            "column",
+            "scatter",
+            "bubble",
+            "funnel",
+            "pyramid",
+            "radar",
+            "polar",
+            "heatmap",
+            "treemap",
+            "tagcloud",
+            "sunburst",
+            "sparkline",
+            "bullet",
+            "gantt",
+            "stock",
+            "waterfall",
+            "circularGauge"
             ]
         },
         "data": {
@@ -102,7 +102,7 @@ anychart_schema = {
                 "type": "string"
               }
             },
-            "required": ["x", "value"]
+            "required": ["value"]
           }
         },
         "container": {
@@ -122,8 +122,7 @@ prompt = f"""
     User Query: {q}
     SQL Generated: {response}
     SQL Result: {result}
-"""
-
+    """
 structured_llm = llm.with_structured_output(anychart_schema)
 res = structured_llm.invoke(prompt)
 
