@@ -18,7 +18,7 @@ os.environ["OPENAI_API_KEY"] = api_key
 # os.environ["LANGCHAIN_API_KEY"] = getpass.getpass()
 # os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
-db = SQLDatabase.from_uri("mysql://root:password@localhost:3306/report_generator_tests")
+db = SQLDatabase.from_uri("mysql://root:@localhost:3306/report_generator_tests")
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
