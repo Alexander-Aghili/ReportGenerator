@@ -1,4 +1,8 @@
-### MVP Implementation Plan for LangChain SQL Query Builder with LLM-Powered Visualizations & Reporting
+Here's an updated MVP implementation plan based on the new architecture represented in the flowchart:
+
+---
+
+### **Revised MVP Implementation Plan for LangChain SQL Query Builder with LLM-Powered Visualizations & Reporting**
 
 #### 1. **Setup the Development Environment**
    - [x] Choose a programming language for the project (Python is recommended).
@@ -12,64 +16,78 @@
      - Streamlit or Flask for front-end interaction (optional).
    - [x] Test the environment to ensure everything works.
 
-#### 2. **Integrate LangChain SQL Query Builder**
+#### 2. **Enhanced Pre-Processing for Query Understanding**
+   - [ ] **Implement Pre-Processing for Natural Language Requests**:
+     - [ ] Remove padding words and irrelevant terms from user input to refine and focus the query.
+     - [ ] Identify key keywords for SQL query development based on the user's input.
+   - [ ] **Standardize Prompt Formatting for LLM Requests**:
+     - [ ] Develop a prompt format to structure user input effectively for the LLM request.
+   - [ ] Integrate pre-processing steps into a dedicated "Pre-Processing Quest" module that prepares input before SQL generation.
+
+#### 3. **Integrate LangChain SQL Query Builder**
    - [ ] Connect LangChain to a SQL database (can use SQLite or any other dataset with a simple schema).
    - [ ] Create a function to initialize a database connection and query builder.
    - [ ] Create a module to handle dataset import (e.g., CSV) and push it into the SQL database for query building.
    - [ ] Implement basic SQL query generation using LangChain's SQLQueryChain or equivalent:
-     - Take user input (natural language) and translate it into SQL.
-     - Ensure SQL security with input sanitization.
+     - [ ] Use the cleaned and pre-processed user input to guide SQL generation.
+     - [ ] Ensure SQL security with input sanitization.
 
-#### 3. **Develop LLM-Powered Query Processing**
+#### 4. **Develop LLM-Powered Query Processing**
    - [ ] Integrate an LLM (e.g., OpenAI’s GPT) for natural language processing.
-     - Set up the API connection to your LLM of choice.
+     - [ ] Set up the API connection to your LLM of choice.
    - [ ] Implement a function to parse user questions and pass them to LangChain to generate corresponding SQL queries.
    - [ ] Handle different types of queries (e.g., aggregations, filtering, time-based queries).
    - [ ] Ensure error handling for invalid or overly complex queries (graceful failure + messaging).
 
-#### 4. **Data Visualization Integration**
+#### 5. **Database Pre-fetching and Management**
+   - [ ] Develop a **Database Pre-fetching** mechanism to retrieve metadata or frequently accessed information.
+   - [ ] Implement a caching system to store frequently used datasets or queries for optimized performance.
+   - [ ] Integrate pre-fetching to anticipate queries based on common data patterns or user preferences.
+
+#### 6. **Data Visualization Integration**
    - [ ] Create a module for generating visualizations based on the returned dataset from SQL queries.
      - Use libraries like Matplotlib, Plotly, or Altair for generating visuals.
      - Support various chart types: Bar charts, Line graphs, Pie charts, Scatter plots, etc.
-   - [ ] Implement logic to map the query type to a suitable visualization format (e.g., time-series data should be shown in line charts).
-   - [ ] Allow user customization for visualizations (optional) – such as choosing a chart type, adding labels, etc.
+   - [ ] **LLM Visualization Formatting**:
+     - [ ] Implement logic in the LLM to map the query type to a suitable visualization format (e.g., time-series data should be shown in line charts).
+     - [ ] Allow user customization for visualizations (optional) – such as choosing a chart type, adding labels, etc.
+     - [ ] Include logic to adjust visualization parameters dynamically based on LLM suggestions.
 
-#### 5. **Create Reports**
+#### 7. **Report Generation and Formatting**
+   - [ ] **Standardized Visualization Formatting (From Query)**:
+     - [ ] Ensure consistency in visualization formatting for different query outputs.
    - [ ] Develop a reporting module to summarize query results in both textual and visual formats:
-     - Automatically generate a brief description of the insights derived from the query results (e.g., top-performing products).
+     - [ ] Automatically generate a brief description of the insights derived from the query results (e.g., top-performing products).
    - [ ] Enable exporting reports:
-     - Create functionality to download reports as PDF or HTML files.
-     - Include charts, tables, and automatically generated text insights in the reports.
+     - [ ] Create functionality to download reports as PDF or HTML files.
+     - [ ] Include charts, tables, and automatically generated text insights in the reports.
 
-#### 6. **User Interface (UI) Implementation**
+#### 8. **User Interface (UI) Implementation**
    - [ ] Build a simple UI or CLI for users to input their questions or queries:
      - Option 1: Use CLI (simpler for MVP).
      - Option 2: Build a front-end using Streamlit/Flask for user interaction.
    - [ ] Implement text input for natural language questions.
    - [ ] Show query results and visualizations interactively on the page.
 
-#### 7. **Testing & Debugging**
+#### 9. **Testing & Debugging**
    - [ ] Test the entire pipeline with various datasets (large and small).
    - [ ] Validate SQL queries generated by the LLM to ensure accuracy and efficiency.
    - [ ] Test the visualizations for different datasets and question types.
    - [ ] Add unit tests for key functionalities (e.g., SQL generation, visualization rendering).
+   - [ ] Test pre-processing steps (padding removal, keyword extraction) to ensure clean and accurate inputs.
 
-#### 8. **Enhancements and Optimizations (Optional for MVP)**
+#### 10. **Enhancements and Optimizations (Optional for MVP)**
    - [ ] Add functionality to handle more complex SQL queries (joins, subqueries, etc.).
    - [ ] Implement caching of frequent queries for faster responses.
    - [ ] Optimize performance for large datasets (e.g., pagination or lazy loading of results).
 
-#### 9. **Documentation**
+#### 11. **Documentation**
    - [ ] Create a user guide on how to input questions and generate reports.
    - [ ] Document the codebase for developers, including installation and running instructions.
 
-#### 10. **Deployment**
+#### 12. **Deployment**
    - [ ] Deploy the MVP to a cloud platform (e.g., Heroku, AWS) if needed.
    - [ ] Ensure the app is scalable if deployed online (handle concurrent user requests).
 
-#### Summary of Features for MVP:
-- Users can ask natural language questions about a dataset.
-- The system will generate SQL queries using LangChain.
-- Visualizations (charts/graphs) will be generated based on the query results.
-- The user can download a report with both text insights and visualizations.
+---
 

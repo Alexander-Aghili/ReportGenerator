@@ -1,0 +1,29 @@
+nltk==3.7
+pandas==1.5.3
+#numpy==1.24.1
+#scikit-learn==1.1.3
+matplotlib==3.6.2
+
+# LangChain packages
+langchain_community # Update with the correct version of langchain_community
+langchain_openai     # Update with the correct version of langchain_openai
+langchain            # General langchain dependencies, update as needed
+
+# Environment variable management
+python-dotenv==1.0.0
+
+# Database connectors
+mysql-connector-python==8.0.33  # MySQL Connector for Python
+SQLAlchemy==2.0.0               # Required by LangChain's SQLDatabase utility
+
+
+# Type hinting (included in Python's standard library, no need to install separately)
+# typing
+
+# Regular expressions (standard library, no need to install separately)
+# re
+
+# JSON and OS (standard libraries, no need to install separately)
+# json
+# os
+
