@@ -17,7 +17,16 @@ os.environ["OPENAI_API_KEY"] = api_key
 # os.environ["LANGCHAIN_API_KEY"] = getpass.getpass()
 # os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
-db = SQLDatabase.from_uri("mysql://root:@localhost:3306/sales_data")
+# Load environment variables from .env file
+load_dotenv('db.env')
+
+# Read environment variables
+host = os.getenv("DB_HOST")
+user = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+database = os.getenv("DB_NAME")
+
+db = SQLDatabase.from_uri(f"mysql://{user}:{password}@{host}:3306/{database}")
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
