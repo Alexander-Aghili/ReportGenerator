@@ -21,7 +21,6 @@ db = SQLDatabase.from_uri("mysql://root:@localhost:3306/sales_data")
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
-
 def ask_db(chain, question):
     response = chain.invoke({"question": question})
     response = response.replace("SQLQuery: ", "")
