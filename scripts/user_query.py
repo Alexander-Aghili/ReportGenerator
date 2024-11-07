@@ -1,6 +1,6 @@
 # user_query.py
 
-import re
+import re, sys
 import nltk
 from nltk.corpus import stopwords
 from typing import List, Tuple
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     processor = UserQueryProcessor()
 
     # Example user query
-    user_query = "What was the quarterly EBITDA for the Meta Corporation and compare it against all other Big Tech companies"
+    user_query = sys.argv[1] if len(sys.argv) > 1 else "What was the quarterly EBITDA for the Meta Corporation and compare it against all other Big Tech companies"
 
     cleaned_query, keywords, standardized_query = processor.process_user_query(user_query)
 
