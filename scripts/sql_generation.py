@@ -25,8 +25,10 @@ host = os.getenv("DB_HOST")
 user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 database = os.getenv("DB_NAME")
+port = os.getenv("DB_PORT")
 
-db = SQLDatabase.from_uri(f"mysql://{user}:{password}@{host}:3306/{database}")
+connstring=f"mysql://{user}:{password}@{host}:{port}/{database}"
+db = SQLDatabase.from_uri(connstring)
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
@@ -41,5 +43,6 @@ def ask_db(chain, question):
     return response, result
 
 
-question = "What is the quarterly sales of our largest customer?"
-ask_db(chain, question)
+if __name__ == "__main__":
+    question = "What is the quarterly sales of our largest customer?"
+    ask_db(chain, question)

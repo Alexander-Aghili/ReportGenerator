@@ -18,7 +18,14 @@ os.environ["OPENAI_API_KEY"] = api_key
 # os.environ["LANGCHAIN_API_KEY"] = getpass.getpass()
 # os.environ["LANGCHAIN_TRACING_V2"] = "true"
 
-db = SQLDatabase.from_uri("mysql://root:@localhost:3306/report_generator_tests")
+host = os.getenv("DB_HOST")
+user = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+database = os.getenv("DB_NAME")
+port = os.getenv("DB_PORT")
+
+connstring=f"mysql://{user}:{password}@{host}:{port}/{database}"
+db = SQLDatabase.from_uri(connstring)
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
@@ -46,9 +53,6 @@ def read_json_file(file_path):
         print("Error decoding JSON. Make sure the file is formatted correctly.")
     except Exception as e:
         print(f"An error occurred: {e}")
-
-q = "Is there any association between the type of vehicle used and delivery time"
-response, result = ask_db(chain, q)
 
 # Usage example
 file_path = '../base/test.json'  # replace with your JSON file path
@@ -115,15 +119,19 @@ anychart_schema = {
   "required": ["chart"]
 }
 
-prompt = f"""
-    You are a data generation expert. Use MySQL results to visualize the data 
-    into a anychart diagram. Here is the following information to help create 
-    that chart:
-    User Query: {q}
-    SQL Generated: {response}
-    SQL Result: {result}
-    """
-structured_llm = llm.with_structured_output(anychart_schema)
-res = structured_llm.invoke(prompt)
+if __name__ == "__main__":
+    q = "Is there any association between the type of vehicle used and delivery time"
+    response, result = ask_db(chain, q)
 
-print(res)
+    prompt = f"""
+        You are a data generation expert. Use MySQL results to visualize the data 
+        into a anychart diagram. Here is the following information to help create 
+        that chart:
+        User Query: {q}
+        SQL Generated: {response}
+        SQL Result: {result}
+        """
+    structured_llm = llm.with_structured_output(anychart_schema)
+    res = structured_llm.invoke(prompt)
+
+    print(res)

@@ -84,5 +84,6 @@ def ai_graph(data):
     except Exception as e:
         print(f"AI Graph failed due to {e}")
 
-for ex in examples:
-    ai_graph(ex)
+if __name__ == "__main__":
+    for ex in examples:
+        ai_graph(ex)
