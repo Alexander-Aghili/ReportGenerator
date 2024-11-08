@@ -2,7 +2,10 @@ from langchain_community.utilities import SQLDatabase
 from langchain_openai import ChatOpenAI
 from langchain.chains import create_sql_query_chain
 from dotenv import load_dotenv
+import mysql.connector
 import os
+import pandas as pd
+from sqlalchemy import create_engine
 
 # Load the environment variables from the .env file
 load_dotenv('openai_key.env')
@@ -32,13 +35,24 @@ db = SQLDatabase.from_uri(connstring)
 llm = ChatOpenAI(model="gpt-4o-mini")
 chain = create_sql_query_chain(llm, db)
 
+config = {
+    'user': user,
+    'password': password,
+    'host': host,
+    'database': database,
+}
+
+def get_connection():
+    return mysql.connector.connect(**config)
+
+db_engine = create_engine("mysql+mysqlconnector://", creator=get_connection)
+
 def ask_db(chain, question):
     response = chain.invoke({"question": question})
     response = response.replace("SQLQuery: ", "")
     response = response.replace("sql", "")
     response = response.replace("```", "")
-    print(response)
-    result = db.run(response)
+    result = pd.read_sql(response, db_engine)
     print(result)
     return response, result
 
