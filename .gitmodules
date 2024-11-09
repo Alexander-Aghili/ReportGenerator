@@ -1,0 +1,9 @@
+[submodule "scripts/lida"]
+	path = scripts/lida
+	url = git@github.com:Alexander-Aghili/lida.git
+[submodule "scripts/datachain"]
+	path = scripts/datachain
+	url = git@github.com:Alexander-Aghili/datachain.git
+[submodule "scripts/lotus"]
+	path = scripts/lotus
+	url = git@github.com:Alexander-Aghili/lotus.git
