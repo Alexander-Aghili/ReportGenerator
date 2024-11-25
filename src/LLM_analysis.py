@@ -12,6 +12,12 @@ def initialize_llm(api_key: str = "") -> None:
     llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
 
+def verify_setup() -> bool:
+    if llm is not None:
+        return True
+    return False
+
+
 # Function to summarize each transcript
 def summarize_text(text: str) -> str:
     messages = [
