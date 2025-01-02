@@ -3,6 +3,11 @@ from typing import Type
 from pandas import DataFrame
 import torch
 
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.document_loaders import TextLoader
+
+
 
 def categorize(df: Type[DataFrame], col: str, categories: list, result_col: str = "Category") -> Type[DataFrame]:
     model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -17,4 +22,18 @@ def categorize(df: Type[DataFrame], col: str, categories: list, result_col: str 
 
     return df
 
+
+def get_embeddings(fname: str, text_splitter: Type[CharacterTextSplitter] = None, embedding = None) -> list:
+    loader = TextLoader(fname)
+    documents = loader.load()
+    text_splitter = CharacterTextSplitter(
+        separator=".", chunk_size=1000, chunk_overlap=0)
+    docs = text_splitter.split_documents(documents)
+
+    emb = OpenAIEmbeddings()
+    input_texts = [d.page_content for d in docs]
+
+    input_embeddings = emb.embed_documents(input_texts)
+    text_embeddings = list(zip(input_texts, input_embeddings))
+    return text_embeddings, emb
 

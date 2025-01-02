@@ -1,134 +1,94 @@
-import json
+import pandas as pd
 import random
-import datetime
+from faker import Faker
+from datetime import datetime, timedelta
+from openai import OpenAI
 
-# Sample data to use
-salespeople = ['Jane Smith', 'Mark Johnson', 'Emily Davis', 'Luke Wilson', 'Sarah Brown', 'Tom Anderson']
-locations = ['New York, NY', 'San Francisco, CA', 'Chicago, IL', 'Austin, TX', 'Seattle, WA', 'Boston, MA']
-industries = ['Technology', 'Finance', 'Healthcare', 'Education', 'Manufacturing', 'Retail']
-client_statuses = ['Existing Client', 'Potential Client', 'Lead']
-company_names = ['Acme Corp', 'Global Tech', 'Innovatech', 'NextGen Labs', 'FutureVision', 'Skyline Ventures']
-competitors = ['TechNova Inc.', 'Alpha Solutions', 'BetaCorp', 'Gamma Enterprises', 'Delta Systems', 'None']
+# Initialize Faker
+fake = Faker()
 
-def generate_clients(num_clients=10):
-    clients = []
-    for i in range(num_clients):
-        client = {}
-        client_name = random.choice(company_names) + f' {i}'
-        client['name'] = client_name
-        client['status'] = random.choice(client_statuses)
-        client['salesperson'] = random.choice(salespeople)
-        client['data'] = {
-            'Current ARR': random.randint(100000, 2000000) if client['status'] == 'Existing Client' else 0,
-            'Number of Employees': random.randint(50, 1000),
-            'Location': random.choice(locations),
-            'Industry': random.choice(industries),
-            'Churn Risk': random.choice(['Low', 'Medium', 'High']),
-            'Potential Upsell': random.choice(['Yes', 'No']),
-            'Competitors Engaged': random.choice(competitors),
-            'Customer Since': random.randint(2015, 2023) if client['status'] == 'Existing Client' else 'N/A',
-            'Last Contact Date': str(datetime.date.today() - datetime.timedelta(days=random.randint(1, 30)))
-        }
-        client['transcript'] = generate_transcript(client['salesperson'], client['name'])
-        client['sales_notes'] = generate_sales_notes(client['salesperson'], client['name'], client['data'])
-        clients.append(client)
-    return clients
+client = OpenAI()
 
-def generate_transcript(salesperson, client_name):
-    # Generate a meaningful sales call transcript exceeding 1000 words
-    topics = [
-        "Discussing current satisfaction with products/services",
-        "Exploring potential upsell opportunities",
-        "Addressing concerns about competitors",
-        "Negotiating pricing and contracts",
-        "Scheduling next steps and follow-up actions"
+# Helper functions
+def random_date(start, end):
+    """Generate a random date between start and end."""
+    return start + timedelta(days=random.randint(0, (end - start).days))
+
+def generate_notes():
+    """Generate sales notes using OpenAI API."""
+    prompts = [
+        "Write a positive note where the customer praises the affordability of the product.",
+        "Write a note where the customer complains about the lack of certain key features.",
+        "Write a neutral note about the customer asking for more customization options.",
+        "Write a positive note where the customer expresses delight with the product's performance.",
+        "Write a negative note where the customer mentions unresolved technical issues.",
+        "Write a note where the customer thanks the team for excellent customer service.",
+        "Write a note about a customer being frustrated by long response times for support.",
+        "Write a positive note where the customer recommends the product to others.",
+        "Write a note where the customer requests more comprehensive training materials.",
+        "Write a note about the customer giving mixed feedback on the overall value for money.",
+        "Write a positive note about a customer being impressed by the sleek design.",
+        "Write a note where the customer criticizes the lack of transparency in pricing.",
+        "Write a note about the customer showing interest in expanding the current contract.",
+        "Write a note where the customer expresses dissatisfaction with delivery delays.",
+        "Write a note where the customer appreciates the recent updates to the software.",
+        "Write a note about a customer being unhappy with frequent system downtimes.",
+        "Write a note where the customer suggests a new feature for better analytics.",
+        "Write a note about the customer praising the intuitive user interface.",
+        "Write a note where the customer expresses frustration over hidden fees.",
+        "Write a note where the customer highlights excellent post-sales support."
     ]
-    
-    transcript = f"**Sales Call Transcript with {client_name}**\n"
-    words_count = 0
-    while words_count < 1000:
-        topic = random.choice(topics)
-        conversation = generate_conversation(salesperson, client_name, topic)
-        transcript += conversation + "\n\n"
-        words_count = len(transcript.split())
-    return transcript.strip()
+    prompt = random.choice(prompts)
 
-def generate_conversation(salesperson, client_name, topic):
-    # Conversation templates for each topic
-    client_rep = "Client Representative"
-    dialogues = []
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "user",
+                "content": prompt 
+                }
+            ]
+        )
 
-    if topic == "Discussing current satisfaction with products/services":
-        dialogues = [
-            f"{salesperson}: Hi, thanks for meeting today. How are you finding our services so far?",
-            f"{client_rep}: Overall, we're pleased, but there are areas we think could improve.",
-            f"{salesperson}: I appreciate your feedback. Could you elaborate on those areas?",
-            f"{client_rep}: Sure, we're looking for faster support response times.",
-            f"{salesperson}: Understood. I'll discuss this with our support team to enhance our responsiveness."
-        ]
-    elif topic == "Exploring potential upsell opportunities":
-        dialogues = [
-            f"{salesperson}: I wanted to share some new features that might benefit your operations.",
-            f"{client_rep}: That sounds interesting. What are they?",
-            f"{salesperson}: We have a new analytics module that provides deeper insights into your data.",
-            f"{client_rep}: We could definitely use better analytics. Can you provide more details?",
-            f"{salesperson}: Absolutely, I'll send over detailed information after our call."
-        ]
-    elif topic == "Addressing concerns about competitors":
-        dialogues = [
-            f"{salesperson}: I've heard that you're exploring options with other providers. Is there anything we can address?",
-            f"{client_rep}: We're evaluating our options to ensure we're getting the best value.",
-            f"{salesperson}: I understand. Let me know if there are specific areas where we can improve.",
-            f"{client_rep}: We're particularly interested in more flexible pricing.",
-            f"{salesperson}: Let's discuss pricing options to better suit your needs."
-        ]
-    elif topic == "Negotiating pricing and contracts":
-        dialogues = [
-            f"{salesperson}: I wanted to revisit our pricing structure with you.",
-            f"{client_rep}: Yes, we're looking to optimize our costs.",
-            f"{salesperson}: We can offer a discount if you extend your contract term.",
-            f"{client_rep}: That could work. What kind of discount are we talking about?",
-            f"{salesperson}: Let me prepare a proposal with the details for you."
-        ]
-    elif topic == "Scheduling next steps and follow-up actions":
-        dialogues = [
-            f"{salesperson}: To wrap up, I'll send the proposal and set up a demo for the new features.",
-            f"{client_rep}: Great, we're looking forward to seeing how they can help us.",
-            f"{salesperson}: Excellent. Is next Wednesday suitable for the demo?",
-            f"{client_rep}: Yes, that works for us.",
-            f"{salesperson}: Perfect, I'll send a calendar invite shortly."
-        ]
+    res = completion.choices[0].message
+    print(res)
+    return res
 
-    # Combine dialogues into a conversation
-    conversation = "\n".join(dialogues)
-    return conversation
+# Generate example sales data
+data = []
+for i in range(100):  # Generate 100 entries
+    customer_name = fake.company()
+    headquarters = fake.city()
+    monthly_revenue = round(random.uniform(10000, 500000), 2)  # Revenue in dollars
+    start_date = random_date(datetime(2020, 1, 1), datetime(2023, 1, 1))
+    end_date = start_date + timedelta(days=random.randint(30, 730))  # 1 month to 2 years
+    sales_contact = fake.name()
+    notes = generate_notes()
+    data.append([
+        customer_name,
+        headquarters,
+        monthly_revenue,
+        start_date.strftime('%Y-%m-%d'),
+        end_date.strftime('%Y-%m-%d'),
+        sales_contact,
+        notes
+    ])
+    print(data[i])
 
-def generate_sales_notes(salesperson, client_name, data):
-    notes = f"**Salesperson:** {salesperson}\n"
-    notes += f"**Client:** {client_name}\n"
-    notes += f"**Date:** {str(datetime.date.today())}\n"
-    notes += "**Notes:**\n"
-    
-    # Generate meaningful notes based on client data
-    if data['Potential Upsell'] == 'Yes':
-        notes += "- Client is interested in potential upsell opportunities.\n"
-    if data['Churn Risk'] == 'High':
-        notes += "- High churn risk detected; need to improve client engagement.\n"
-    if data['Competitors Engaged'] != 'None':
-        notes += f"- Client is in discussions with competitor {data['Competitors Engaged']}.\n"
-    if data['Current ARR'] > 0:
-        notes += "- Discussed contract renewal and possible pricing adjustments.\n"
-    else:
-        notes += "- Potential client; focus on demonstrating value proposition.\n"
+# Create DataFrame
+columns = [
+    "Customer Name", 
+    "Customer Headquarters", 
+    "Customer Monthly Revenue", 
+    "Contract Start Date", 
+    "Contract End Date", 
+    "Sales Contact", 
+    "Sales Notes"
+]
+df = pd.DataFrame(data, columns=columns)
 
-    notes += "**Action Items:**\n"
-    notes += "- Send detailed proposal and feature information.\n"
-    notes += "- Schedule follow-up meeting next week.\n"
+# Save to CSV
+df.to_csv("sales_data_with_varied_notes.csv", index=False)
 
-    return notes
-
-if __name__ == "__main__":
-    clients = generate_clients(10)
-    with open('business_dataset.json', 'w') as f:
-        json.dump(clients, f, indent=4)
 
